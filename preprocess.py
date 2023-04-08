@@ -38,9 +38,9 @@ for i in range(100):
                 else:
                     break
             if s != "":
-                prompt = "The conversation between human and AI assistant.\n"
+                prompt = "인간과 AI 어시스턴트 간의 대화입니다.\n"
                 s = prompt + s + "[|Human|] "
 
                 data.append({"topic": topic, "input": s})
 
-json.dump(data, open("data/{}_chat_data.json".format(data_name), "w"))
+json.dump(data, open("data/{}_chat_data.json".format(data_name), "w"), ensure_ascii=False)
