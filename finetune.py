@@ -40,7 +40,6 @@ TARGET_MODULES = [
 DATA_PATH = "data/data_tmp.json"
 OUTPUT_DIR = "checkpoints/{}".format(size)
 
-adapter_model = sys.argv[5]
 
 if not os.path.exists("data"):
     os.makedirs("data")
@@ -84,16 +83,7 @@ config = LoraConfig(
 config.save_pretrained(OUTPUT_DIR)
 
 
-
-if adapter_model:
-    print('adapter_model from_pretrained...')
-    model = PeftModel.from_pretrained(
-        model,
-        adapter_model,
-        torch_dtype=torch.float16,
-    )
-else:
-    model = get_peft_model(model, config) 
+model = get_peft_model(model, config) 
 
 tokenizer.pad_token_id = 0
 
