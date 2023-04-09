@@ -57,7 +57,7 @@ if not os.path.exists("collected_data"):
     os.makedirs("collected_data")
 
 
-question = question[1010:1500]
+question = question[1500:3000]
 
 for query in tqdm(question, total=len(question)):
     if query in chat_content:
