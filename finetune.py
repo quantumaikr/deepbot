@@ -40,7 +40,7 @@ TARGET_MODULES = [
 DATA_PATH = "data/data_tmp.json"
 OUTPUT_DIR = "checkpoints/{}".format(size)
 
-adapter_model = sys.argv[4]
+adapter_model = sys.argv[5]
 
 if not os.path.exists("data"):
     os.makedirs("data")
