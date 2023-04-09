@@ -43,4 +43,5 @@ for i in range(100):
 
                 data.append({"topic": topic, "input": s})
 
+print('data', len(data))
 json.dump(data, open("data/{}_chat_data.json".format(data_name), "w"), ensure_ascii=False)

@@ -14,8 +14,8 @@ from peft import (
     LoraConfig,
     get_peft_model,
     get_peft_model_state_dict,
+    PeftModel
 )
-
 
 # Parameters
 MICRO_BATCH_SIZE = int(sys.argv[2])
@@ -39,6 +39,8 @@ TARGET_MODULES = [
 ]
 DATA_PATH = "data/data_tmp.json"
 OUTPUT_DIR = "checkpoints/{}".format(size)
+
+adapter_model = sys.argv[4]
 
 if not os.path.exists("data"):
     os.makedirs("data")
@@ -81,7 +83,18 @@ config = LoraConfig(
 )
 config.save_pretrained(OUTPUT_DIR)
 
-model = get_peft_model(model, config)
+
+
+if adapter_model:
+    print('adapter_model from_pretrained...')
+    model = PeftModel.from_pretrained(
+        model,
+        adapter_model,
+        torch_dtype=torch.float16,
+    )
+else:
+    model = get_peft_model(model, config) 
+
 tokenizer.pad_token_id = 0
 
 for n, p in model.model.named_parameters():
