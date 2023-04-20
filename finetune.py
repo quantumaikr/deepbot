@@ -8,7 +8,7 @@ import torch.nn as nn
 import bitsandbytes as bnb
 from datasets import load_dataset
 import transformers
-from transformers import LlamaForCausalLM, LlamaTokenizer
+from transformers import LlamaForCausalLM, LlamaTokenizer, AutoTokenizer, AutoModelForCausalLM
 from peft import (
     prepare_model_for_int8_training,
     LoraConfig,
@@ -59,16 +59,25 @@ if ddp:
     device_map = {"": int(os.environ.get("LOCAL_RANK") or 0)}
     GRADIENT_ACCUMULATION_STEPS = GRADIENT_ACCUMULATION_STEPS // world_size
 
+# model = LlamaForCausalLM.from_pretrained(
+#     "decapoda-research/llama-{}-hf".format(size),
+#     load_in_8bit=True,
+#     device_map=device_map,
+# )
 model = LlamaForCausalLM.from_pretrained(
-    "decapoda-research/llama-{}-hf".format(size),
+    "EleutherAI/polyglot-ko-12.8b",
     load_in_8bit=True,
     device_map=device_map,
 )
 total_params, params = 0, 0
 
-tokenizer = LlamaTokenizer.from_pretrained(
-    "decapoda-research/llama-{}-hf".format(size), add_eos_token=True
+# tokenizer = LlamaTokenizer.from_pretrained(
+#     "decapoda-research/llama-{}-hf".format(size), add_eos_token=True
+# )
+tokenizer = AutoTokenizer.from_pretrained(
+    "EleutherAI/polyglot-ko-12.8b", add_eos_token=True
 )
+
 
 model = prepare_model_for_int8_training(model)
 
