@@ -64,7 +64,7 @@ if ddp:
 #     load_in_8bit=True,
 #     device_map=device_map,
 # )
-model = LlamaForCausalLM.from_pretrained(
+model = AutoModelForCausalLM.from_pretrained(
     "EleutherAI/polyglot-ko-12.8b",
     load_in_8bit=True,
     device_map=device_map,
