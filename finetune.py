@@ -25,17 +25,13 @@ GRADIENT_ACCUMULATION_STEPS = BATCH_SIZE // MICRO_BATCH_SIZE
 EPOCHS = 1
 LEARNING_RATE = float(sys.argv[3])
 CUTOFF_LEN = 512
-LORA_R = 8
-LORA_ALPHA = 16
+LORA_R = 16
+LORA_ALPHA = 32
 LORA_DROPOUT = 0.05
 VAL_SET_SIZE = 50
 TARGET_MODULES = [
     "q_proj",
-    "k_proj",
-    "v_proj",
-    "down_proj",
-    "gate_proj",
-    "up_proj",
+    "v_proj"
 ]
 DATA_PATH = "data/data_tmp.json"
 OUTPUT_DIR = "checkpoints/{}".format(size)
@@ -59,23 +55,15 @@ if ddp:
     device_map = {"": int(os.environ.get("LOCAL_RANK") or 0)}
     GRADIENT_ACCUMULATION_STEPS = GRADIENT_ACCUMULATION_STEPS // world_size
 
-# model = LlamaForCausalLM.from_pretrained(
-#     "decapoda-research/llama-{}-hf".format(size),
-#     load_in_8bit=True,
-#     device_map=device_map,
-# )
 model = AutoModelForCausalLM.from_pretrained(
-    "EleutherAI/polyglot-ko-12.8b",
+    "beomi/KoAlpaca-Polyglot-12.8B",
     load_in_8bit=True,
     device_map=device_map,
 )
 total_params, params = 0, 0
 
-# tokenizer = LlamaTokenizer.from_pretrained(
-#     "decapoda-research/llama-{}-hf".format(size), add_eos_token=True
-# )
 tokenizer = AutoTokenizer.from_pretrained(
-    "EleutherAI/polyglot-ko-12.8b", add_eos_token=True
+    "beomi/KoAlpaca-Polyglot-12.8B", add_eos_token=True
 )
 
 
@@ -84,7 +72,7 @@ model = prepare_model_for_int8_training(model)
 config = LoraConfig(
     r=LORA_R,
     lora_alpha=LORA_ALPHA,
-    # target_modules=TARGET_MODULES,
+    target_modules='.*decoder.*(SelfAttention|EncDecAttention).*(q|v)$',
     lora_dropout=LORA_DROPOUT,
     bias="none",
     task_type="CAUSAL_LM",
