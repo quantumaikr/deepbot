@@ -19,19 +19,18 @@ from peft import (
 
 # Parameters
 MICRO_BATCH_SIZE = int(sys.argv[2])
-BATCH_SIZE = 64
+BATCH_SIZE = 256
 size = sys.argv[1]
 GRADIENT_ACCUMULATION_STEPS = BATCH_SIZE // MICRO_BATCH_SIZE
-EPOCHS = 1
+EPOCHS = 2
 LEARNING_RATE = float(sys.argv[3])
 CUTOFF_LEN = 512
-LORA_R = 16
-LORA_ALPHA = 32
+LORA_R = 8
+LORA_ALPHA = 16
 LORA_DROPOUT = 0.05
-VAL_SET_SIZE = 50
+VAL_SET_SIZE = 10
 TARGET_MODULES = [
-    "q_proj",
-    "v_proj"
+    "query_key_value",
 ]
 DATA_PATH = "data/data_tmp.json"
 OUTPUT_DIR = "checkpoints/{}".format(size)
@@ -57,6 +56,7 @@ if ddp:
 
 model = AutoModelForCausalLM.from_pretrained(
     "beomi/KoAlpaca-Polyglot-12.8B",
+    torch_dtype=torch.float16,
     load_in_8bit=True,
     device_map=device_map,
 )
@@ -72,7 +72,7 @@ model = prepare_model_for_int8_training(model)
 config = LoraConfig(
     r=LORA_R,
     lora_alpha=LORA_ALPHA,
-    target_modules='.*decoder.*(SelfAttention|EncDecAttention).*(q|v)$',
+    target_modules=TARGET_MODULES,
     lora_dropout=LORA_DROPOUT,
     bias="none",
     task_type="CAUSAL_LM",
