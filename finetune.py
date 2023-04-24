@@ -19,7 +19,7 @@ from peft import (
 
 # Parameters
 MICRO_BATCH_SIZE = int(sys.argv[2])
-BATCH_SIZE = 256
+BATCH_SIZE = 4
 size = sys.argv[1]
 GRADIENT_ACCUMULATION_STEPS = BATCH_SIZE // MICRO_BATCH_SIZE
 EPOCHS = 2
@@ -55,7 +55,7 @@ if ddp:
     GRADIENT_ACCUMULATION_STEPS = GRADIENT_ACCUMULATION_STEPS // world_size
 
 model = AutoModelForCausalLM.from_pretrained(
-    "beomi/KoAlpaca-Polyglot-12.8B",
+    "beomi/KoAlpaca-Polyglot",
     torch_dtype=torch.float16,
     load_in_8bit=True,
     device_map=device_map,
@@ -63,7 +63,7 @@ model = AutoModelForCausalLM.from_pretrained(
 total_params, params = 0, 0
 
 tokenizer = AutoTokenizer.from_pretrained(
-    "beomi/KoAlpaca-Polyglot-12.8B", add_eos_token=True
+    "beomi/KoAlpaca-Polyglot", add_eos_token=True
 )
 
 
