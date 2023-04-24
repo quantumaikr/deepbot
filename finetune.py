@@ -55,7 +55,8 @@ if ddp:
     GRADIENT_ACCUMULATION_STEPS = GRADIENT_ACCUMULATION_STEPS // world_size
 
 model = AutoModelForCausalLM.from_pretrained(
-    "beomi/KoAlpaca-Polyglot",
+    "beomi/KoAlpaca-Polyglot-12.8B",
+    revision="8bit",
     torch_dtype=torch.float16,
     load_in_8bit=True,
     device_map=device_map,
@@ -63,7 +64,7 @@ model = AutoModelForCausalLM.from_pretrained(
 total_params, params = 0, 0
 
 tokenizer = AutoTokenizer.from_pretrained(
-    "beomi/KoAlpaca-Polyglot", add_eos_token=True
+    "beomi/KoAlpaca-Polyglot-12.8B", add_eos_token=True
 )
 
 
